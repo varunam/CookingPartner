@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CookingPartner</string>
+    <string name="ingredients_title">X Ingredients</string>
+    <string name="recipe_title">Recipe Title</string>
+    <string name="x_ingredients">%1d Ingredients</string>
+    <string name="step_x">Step %1d</string>
+</resources>
