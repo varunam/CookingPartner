@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.util.List;
 
-public class Recipe implements Parcelable{
+public class Recipe implements Parcelable {
 
     private int id;
     private String name;

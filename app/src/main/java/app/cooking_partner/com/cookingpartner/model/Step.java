@@ -1,9 +1,18 @@
 package app.cooking_partner.com.cookingpartner.model;
 
-public class Step {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
+public class Step implements Parcelable {
 
     private int id;
-    private String shortDescription, description, videoUrl, thumbNailUrl;
+    private String shortDescription, description;
+    @SerializedName("videoURL")
+    private String videoUrl;
+    @SerializedName("thumbnailURL")
+    private String thumbNailUrl;
 
     public Step(int id, String shortDescription, String description, String videoUrl, String thumbNailUrl) {
         this.id = id;
@@ -12,6 +21,26 @@ public class Step {
         this.videoUrl = videoUrl;
         this.thumbNailUrl = thumbNailUrl;
     }
+
+    protected Step(Parcel in) {
+        id = in.readInt();
+        shortDescription = in.readString();
+        description = in.readString();
+        videoUrl = in.readString();
+        thumbNailUrl = in.readString();
+    }
+
+    public static final Creator<Step> CREATOR = new Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -51,5 +80,19 @@ public class Step {
 
     public void setThumbNailUrl(String thumbNailUrl) {
         this.thumbNailUrl = thumbNailUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(shortDescription);
+        parcel.writeString(description);
+        parcel.writeString(videoUrl);
+        parcel.writeString(thumbNailUrl);
     }
 }

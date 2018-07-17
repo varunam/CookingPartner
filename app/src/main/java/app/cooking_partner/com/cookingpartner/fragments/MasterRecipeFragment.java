@@ -17,6 +17,7 @@ import java.util.List;
 import app.cooking_partner.com.cookingpartner.Api;
 import app.cooking_partner.com.cookingpartner.R;
 import app.cooking_partner.com.cookingpartner.adapters.RecyclerViewAdapter;
+import app.cooking_partner.com.cookingpartner.interfaces.OnRecipeClickedListener;
 import app.cooking_partner.com.cookingpartner.model.Recipe;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,7 +25,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MasterRecipeFragment extends Fragment implements RecyclerViewAdapter.OnRecipeClickedListener {
+import static app.cooking_partner.com.cookingpartner.MainActivity.RECIPE_HOME_FRAGMENT;
+
+public class MasterRecipeFragment extends Fragment implements OnRecipeClickedListener {
 
     public static final String PARCELABLE_KEY = "parcelable-key";
 
@@ -62,7 +65,7 @@ public class MasterRecipeFragment extends Fragment implements RecyclerViewAdapte
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 progressDialog.dismiss();
                 List<Recipe> recipes = response.body();
-                recyclerViewAdapter = new RecyclerViewAdapter(MasterRecipeFragment.this.getActivity(), recipes,MasterRecipeFragment.this);
+                recyclerViewAdapter = new RecyclerViewAdapter(MasterRecipeFragment.this.getActivity(), recipes, MasterRecipeFragment.this);
                 recyclerView.setAdapter(recyclerViewAdapter);
                 for (Recipe recipe : recipes) {
                     Log.e(TAG, "Recipe name: " + recipe.getName());
@@ -84,12 +87,12 @@ public class MasterRecipeFragment extends Fragment implements RecyclerViewAdapte
     public void onRecipeSelected(Recipe recipe) {
         RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(PARCELABLE_KEY,recipe);
+        bundle.putParcelable(PARCELABLE_KEY, recipe);
         recipeHomeFragment.setArguments(bundle);
         Log.e(TAG, "Clicked " + recipe.getName());
         getFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.container,recipeHomeFragment)
+                .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
                 .commit();
     }
 }

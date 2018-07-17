@@ -4,4 +4,5 @@
     <string name="recipe_title">Recipe Title</string>
     <string name="x_ingredients">%1d Ingredients</string>
     <string name="step_x">Step %1d</string>
+    <string name="recipe_introduction">Recipe Introduction</string>
 </resources>
