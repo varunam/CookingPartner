@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import app.cooking_partner.com.cookingpartner.MainActivity;
 import app.cooking_partner.com.cookingpartner.R;
 import app.cooking_partner.com.cookingpartner.adapters.RecyclerViewAdapter;
 import app.cooking_partner.com.cookingpartner.interfaces.OnStepClickedListener;
@@ -26,7 +27,7 @@ import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragm
 
 public class RecipeHomeFragment extends Fragment implements OnStepClickedListener {
     private static final String TAG = RecipeHomeFragment.class.getSimpleName();
-    private Recipe recipe;
+    private boolean twoPaneLayout = false;
 
     @Nullable
     @Override
@@ -36,43 +37,72 @@ public class RecipeHomeFragment extends Fragment implements OnStepClickedListene
         TextView ingredientsTitle = rootView.findViewById(R.id.flrm_ingredients_title_id);
         TextView ingredientsList = rootView.findViewById(R.id.flrm_ingredients_id);
         RecyclerView recyclerView = rootView.findViewById(R.id.flrm_recycler_view_id);
-        recipe = getArguments().getParcelable(PARCELABLE_KEY);
 
-        if (recipe != null) {
-            Log.e(TAG, "Received Recipe: " + recipe.getName());
+        twoPaneLayout = rootView.findViewById(R.id.container_step) != null;
 
-            List<Step> steps = recipe.getSteps();
-            List<Ingredient> ingredients = recipe.getIngredients();
+        if (getArguments() != null) {
+            Recipe recipe = getArguments().getParcelable(PARCELABLE_KEY);
 
-            int counter = 1;
-            for (Ingredient ingredient : ingredients) {
-                ingredientsList.append(counter + ". " + ingredient.getIngredientName() + " " + ingredient.getQuantity() + ingredient.getMeasure() + "\n");
-                counter++;
-            }
-            ingredientsTitle.setText(String.format(this.getActivity().getResources().getString(R.string.x_ingredients), ingredients.size()));
-            RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this.getActivity(), steps, this);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-            recyclerView.setAdapter(recyclerViewAdapter);
+            MainActivity activity = ((MainActivity) getActivity());
+            if (activity != null)
+                activity.setActionbarTitle(recipe.getName(), true);
+
+            if (recipe != null) {
+                Log.e(TAG, "Received Recipe: " + recipe.getName());
+
+                List<Step> steps = recipe.getSteps();
+                List<Ingredient> ingredients = recipe.getIngredients();
+
+                int counter = 1;
+                for (Ingredient ingredient : ingredients) {
+                    ingredientsList.append(counter + ". " + ingredient.getIngredientName() + " " + ingredient.getQuantity() + ingredient.getMeasure() + "\n");
+                    counter++;
+                }
+                ingredientsTitle.setText(String.format(this.getActivity().getResources().getString(R.string.x_ingredients), ingredients.size()));
+                RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this.getActivity(), steps, this);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                recyclerView.setAdapter(recyclerViewAdapter);
+            } else
+                Log.e(TAG, "Received NULL Recipe");
         } else
-            Log.e(TAG, "Received NULL Recipe");
+            Log.e(TAG, "Received NULL arguments");
 
         return rootView;
     }
 
     @Override
     public void onRecipeSelected(Step step) {
-        IndividualStepFragment stepFragment = new IndividualStepFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(PARCELABLE_KEY, step);
-        stepFragment.setArguments(bundle);
-        if (getFragmentManager() != null) {
-            getFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .replace(R.id.container, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
-                    .commit();
-            Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
-        } else
-            Log.e(TAG, "Received null FragmentManager");
+        if (twoPaneLayout) {
+            IndividualStepFragment stepFragment = new IndividualStepFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, step);
+            stepFragment.setArguments(bundle);
+            if (getFragmentManager() != null) {
+                getFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.container_step, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
+                        .commit();
+                Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
+            } else
+                Log.e(TAG, "Received null FragmentManager");
+        } else {
+            IndividualStepFragment stepFragment = new IndividualStepFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, step);
+            stepFragment.setArguments(bundle);
+            if (getFragmentManager() != null) {
+                getFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.container, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
+                        .commit();
+                Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
+            } else
+                Log.e(TAG, "Received null FragmentManager");
+        }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 }

@@ -55,7 +55,8 @@ public class IndividualStepFragment extends Fragment {
                 } else
                     Log.e(TAG, "Received null VideoUrl");
 
-                stepDescription.setText(step.getDescription());
+                if (stepDescription != null)
+                    stepDescription.setText(step.getDescription());
             } else
                 Log.e(TAG, "Received null step");
         } else

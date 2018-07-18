@@ -3,8 +3,10 @@ package app.cooking_partner.com.cookingpartner;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import app.cooking_partner.com.cookingpartner.fragments.IndividualStepFragment;
 import app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment;
@@ -25,7 +27,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
-            Log.e(TAG, "default stored SavedInstanceState is used.");
+            {
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setDisplayHomeAsUpEnabled(true);
+                } else
+                    Log.e(TAG, "NULL Action bar is received");
+            }
         } else {
             loadFragment(MASTER_RECIPE_FRAGMENT);
             Log.e(TAG, "Loading master fragment by default");
@@ -51,6 +59,22 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .add(R.id.container, fragment, chosenFragement)
                 .commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void setActionbarTitle(String title, boolean backIconDisplay) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+            actionBar.setDisplayHomeAsUpEnabled(backIconDisplay);
+        }
     }
 
 }

@@ -1,10 +1,12 @@
 package app.cooking_partner.com.cookingpartner.fragments;
 
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -33,6 +35,7 @@ public class MasterRecipeFragment extends Fragment implements OnRecipeClickedLis
 
     private static final String TAG = MasterRecipeFragment.class.getSimpleName();
     private RecyclerViewAdapter recyclerViewAdapter;
+    private boolean twoPaneLayout = false;
 
     @Nullable
     @Override
@@ -41,7 +44,12 @@ public class MasterRecipeFragment extends Fragment implements OnRecipeClickedLis
 
         final RecyclerView recyclerView = rootView.findViewById(R.id.lr_recycler_view_id);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        if (isTablet())
+            recyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3));
+        else
+            recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+
+        twoPaneLayout = rootView.findViewById(R.id.container_step) != null;
 
         //creating retrofit object
         Retrofit retrofit = new Retrofit.Builder()
@@ -56,6 +64,7 @@ public class MasterRecipeFragment extends Fragment implements OnRecipeClickedLis
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(MasterRecipeFragment.this.getActivity());
         progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
 
@@ -85,14 +94,32 @@ public class MasterRecipeFragment extends Fragment implements OnRecipeClickedLis
 
     @Override
     public void onRecipeSelected(Recipe recipe) {
-        RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(PARCELABLE_KEY, recipe);
-        recipeHomeFragment.setArguments(bundle);
-        Log.e(TAG, "Clicked " + recipe.getName());
-        getFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
-                .commit();
+        if (twoPaneLayout) {
+            RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, recipe);
+            recipeHomeFragment.setArguments(bundle);
+            Log.e(TAG, "Clicked " + recipe.getName());
+            getFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
+                    .commit();
+        } else {
+            RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, recipe);
+            recipeHomeFragment.setArguments(bundle);
+            Log.e(TAG, "Clicked " + recipe.getName());
+            getFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
+                    .commit();
+        }
+    }
+
+    public boolean isTablet() {
+        boolean xlarge = ((this.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+        boolean large = ((this.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        return (xlarge || large);
     }
 }
