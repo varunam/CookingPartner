@@ -26,7 +26,6 @@ import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragm
 
 public class RecipeHomeFragment extends Fragment implements OnStepClickedListener {
     private static final String TAG = RecipeHomeFragment.class.getSimpleName();
-
     private Recipe recipe;
 
     @Nullable
@@ -37,30 +36,25 @@ public class RecipeHomeFragment extends Fragment implements OnStepClickedListene
         TextView ingredientsTitle = rootView.findViewById(R.id.flrm_ingredients_title_id);
         TextView ingredientsList = rootView.findViewById(R.id.flrm_ingredients_id);
         RecyclerView recyclerView = rootView.findViewById(R.id.flrm_recycler_view_id);
+        recipe = getArguments().getParcelable(PARCELABLE_KEY);
 
-        if (getArguments() != null && getArguments().containsKey(PARCELABLE_KEY)) {
-            Recipe recipe = getArguments().getParcelable(PARCELABLE_KEY);
-            if (recipe != null) {
-                Log.e(TAG, "Received Recipe: " + recipe.getName());
+        if (recipe != null) {
+            Log.e(TAG, "Received Recipe: " + recipe.getName());
 
-                List<Step> steps = recipe.getSteps();
-                List<Ingredient> ingredients = recipe.getIngredients();
+            List<Step> steps = recipe.getSteps();
+            List<Ingredient> ingredients = recipe.getIngredients();
 
-                int counter = 1;
-                for (Ingredient ingredient : ingredients) {
-                    ingredientsList.append(counter + ". " + ingredient.getIngredientName() + " " + ingredient.getQuantity() + ingredient.getMeasure() + "\n");
-                    counter++;
-                }
-
-                ingredientsTitle.setText(String.format(this.getActivity().getResources().getString(R.string.x_ingredients), ingredients.size()));
-                RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this.getActivity(), steps, this);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-                recyclerView.setAdapter(recyclerViewAdapter);
-            } else
-                Log.e(TAG, "Received NULL Recipe");
+            int counter = 1;
+            for (Ingredient ingredient : ingredients) {
+                ingredientsList.append(counter + ". " + ingredient.getIngredientName() + " " + ingredient.getQuantity() + ingredient.getMeasure() + "\n");
+                counter++;
+            }
+            ingredientsTitle.setText(String.format(this.getActivity().getResources().getString(R.string.x_ingredients), ingredients.size()));
+            RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this.getActivity(), steps, this);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+            recyclerView.setAdapter(recyclerViewAdapter);
         } else
-            Log.e(TAG, "Received NULL Arguments");
-
+            Log.e(TAG, "Received NULL Recipe");
 
         return rootView;
     }
@@ -71,10 +65,14 @@ public class RecipeHomeFragment extends Fragment implements OnStepClickedListene
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARCELABLE_KEY, step);
         stepFragment.setArguments(bundle);
-        getFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.container, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
-                .commit();
-        Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
+        if (getFragmentManager() != null) {
+            getFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.container, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
+                    .commit();
+            Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
+        } else
+            Log.e(TAG, "Received null FragmentManager");
     }
+
 }
