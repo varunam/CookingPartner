@@ -11,8 +11,14 @@ import android.view.MenuItem;
 import app.cooking_partner.com.cookingpartner.fragments.IndividualStepFragment;
 import app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment;
 import app.cooking_partner.com.cookingpartner.fragments.RecipeHomeFragment;
+import app.cooking_partner.com.cookingpartner.interfaces.OnRecipeClickedListener;
+import app.cooking_partner.com.cookingpartner.interfaces.OnStepClickedListener;
+import app.cooking_partner.com.cookingpartner.model.Recipe;
+import app.cooking_partner.com.cookingpartner.model.Step;
 
-public class MainActivity extends AppCompatActivity {
+import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment.PARCELABLE_KEY;
+
+public class MainActivity extends AppCompatActivity implements OnRecipeClickedListener, OnStepClickedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String FRAGMENT_STATE = "fragment-state-key";
@@ -21,24 +27,19 @@ public class MainActivity extends AppCompatActivity {
     public static final String RECIPE_HOME_FRAGMENT = "recipe-home-fragment";
     public static final String INDIVIDUAL_STEP_FRAGMENT = "individual-step-fragment";
 
+    private boolean twoPaneLayout = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
-            {
-                ActionBar actionBar = getSupportActionBar();
-                if (actionBar != null) {
-                    actionBar.setDisplayHomeAsUpEnabled(true);
-                } else
-                    Log.e(TAG, "NULL Action bar is received");
-            }
+            Log.e(TAG, "SavedInstanceState received non null");
         } else {
             loadFragment(MASTER_RECIPE_FRAGMENT);
             Log.e(TAG, "Loading master fragment by default");
         }
-
     }
 
     private void loadFragment(String chosenFragement) {
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -76,5 +78,63 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(backIconDisplay);
         }
     }
+
+    @Override
+    public void onRecipeSelected(Recipe recipe) {
+        if (twoPaneLayout) {
+            RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, recipe);
+            recipeHomeFragment.setArguments(bundle);
+            Log.e(TAG, "Clicked " + recipe.getName());
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
+                    .commit();
+        } else {
+            RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, recipe);
+            recipeHomeFragment.setArguments(bundle);
+            Log.e(TAG, "Clicked " + recipe.getName());
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onStepSelected(Step step) {
+        twoPaneLayout = findViewById(R.id.container_step) != null;
+        if (twoPaneLayout) {
+            IndividualStepFragment stepFragment = new IndividualStepFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, step);
+            stepFragment.setArguments(bundle);
+            if (getSupportFragmentManager() != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.container_step, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
+                        .commit();
+                Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
+            } else
+                Log.e(TAG, "Received null FragmentManager");
+        } else {
+            IndividualStepFragment stepFragment = new IndividualStepFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PARCELABLE_KEY, step);
+            stepFragment.setArguments(bundle);
+            if (getSupportFragmentManager() != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.container, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
+                        .commit();
+                Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
+            } else
+                Log.e(TAG, "Received null FragmentManager");
+        }
+    }
+
 
 }

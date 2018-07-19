@@ -25,7 +25,7 @@ import app.cooking_partner.com.cookingpartner.model.Step;
 import static app.cooking_partner.com.cookingpartner.MainActivity.INDIVIDUAL_STEP_FRAGMENT;
 import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment.PARCELABLE_KEY;
 
-public class RecipeHomeFragment extends Fragment implements OnStepClickedListener {
+public class RecipeHomeFragment extends Fragment {
     private static final String TAG = RecipeHomeFragment.class.getSimpleName();
     private boolean twoPaneLayout = false;
 
@@ -59,7 +59,7 @@ public class RecipeHomeFragment extends Fragment implements OnStepClickedListene
                     counter++;
                 }
                 ingredientsTitle.setText(String.format(this.getActivity().getResources().getString(R.string.x_ingredients), ingredients.size()));
-                RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(this.getActivity(), steps, this);
+                RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), steps);
                 recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                 recyclerView.setAdapter(recyclerViewAdapter);
             } else
@@ -68,37 +68,6 @@ public class RecipeHomeFragment extends Fragment implements OnStepClickedListene
             Log.e(TAG, "Received NULL arguments");
 
         return rootView;
-    }
-
-    @Override
-    public void onRecipeSelected(Step step) {
-        if (twoPaneLayout) {
-            IndividualStepFragment stepFragment = new IndividualStepFragment();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(PARCELABLE_KEY, step);
-            stepFragment.setArguments(bundle);
-            if (getFragmentManager() != null) {
-                getFragmentManager().beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.container_step, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
-                        .commit();
-                Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
-            } else
-                Log.e(TAG, "Received null FragmentManager");
-        } else {
-            IndividualStepFragment stepFragment = new IndividualStepFragment();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(PARCELABLE_KEY, step);
-            stepFragment.setArguments(bundle);
-            if (getFragmentManager() != null) {
-                getFragmentManager().beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.container, stepFragment, INDIVIDUAL_STEP_FRAGMENT)
-                        .commit();
-                Log.e(TAG, "Replacing RecipeHomeFragment by IndividualStepFragment");
-            } else
-                Log.e(TAG, "Received null FragmentManager");
-        }
     }
 
     @Override

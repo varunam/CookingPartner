@@ -34,8 +34,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private String STEPS_LIST = "steps-list";
 
 
-    public RecyclerViewAdapter(Context context, List<Recipe> recipes, OnRecipeClickedListener onRecipeClickedListener) {
-        this.onRecipeClickedListener = onRecipeClickedListener;
+    public RecyclerViewAdapter(Context context, List<Recipe> recipes, String sendNull) {
+        if (context instanceof OnRecipeClickedListener)
+        {
+            this.onRecipeClickedListener = (OnRecipeClickedListener) context;
+        }
         this.recipes = recipes;
         this.context = context;
         Log.e(TAG, "Initialized recyclerViewAdapter with recipes size: " + recipes.size());
@@ -43,10 +46,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         CATEGORY = RECIPE_LIST;
     }
 
-    public RecyclerViewAdapter(Context context, List<Step> steps, OnStepClickedListener onStepClickedListener) {
+    public RecyclerViewAdapter(Context context, List<Step> steps) {
         this.context = context;
         this.steps = steps;
-        this.onStepClickedListener = onStepClickedListener;
+        if (context instanceof OnStepClickedListener)
+            this.onStepClickedListener = (OnStepClickedListener) context;
 
         CATEGORY = STEPS_LIST;
     }
@@ -88,7 +92,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             viewHolder.stepCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onStepClickedListener.onRecipeSelected(step);
+                    onStepClickedListener.onStepSelected(step);
                 }
             });
         }

@@ -29,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static app.cooking_partner.com.cookingpartner.MainActivity.RECIPE_HOME_FRAGMENT;
 
-public class MasterRecipeFragment extends Fragment implements OnRecipeClickedListener {
+public class MasterRecipeFragment extends Fragment {
 
     public static final String PARCELABLE_KEY = "parcelable-key";
 
@@ -48,8 +48,6 @@ public class MasterRecipeFragment extends Fragment implements OnRecipeClickedLis
             recyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3));
         else
             recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-
-        twoPaneLayout = rootView.findViewById(R.id.container_step) != null;
 
         //creating retrofit object
         Retrofit retrofit = new Retrofit.Builder()
@@ -74,7 +72,7 @@ public class MasterRecipeFragment extends Fragment implements OnRecipeClickedLis
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 progressDialog.dismiss();
                 List<Recipe> recipes = response.body();
-                recyclerViewAdapter = new RecyclerViewAdapter(MasterRecipeFragment.this.getActivity(), recipes, MasterRecipeFragment.this);
+                recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), recipes, null);
                 recyclerView.setAdapter(recyclerViewAdapter);
                 for (Recipe recipe : recipes) {
                     Log.e(TAG, "Recipe name: " + recipe.getName());
@@ -90,31 +88,6 @@ public class MasterRecipeFragment extends Fragment implements OnRecipeClickedLis
         });
 
         return rootView;
-    }
-
-    @Override
-    public void onRecipeSelected(Recipe recipe) {
-        if (twoPaneLayout) {
-            RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(PARCELABLE_KEY, recipe);
-            recipeHomeFragment.setArguments(bundle);
-            Log.e(TAG, "Clicked " + recipe.getName());
-            getFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
-                    .commit();
-        } else {
-            RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(PARCELABLE_KEY, recipe);
-            recipeHomeFragment.setArguments(bundle);
-            Log.e(TAG, "Clicked " + recipe.getName());
-            getFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .replace(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
-                    .commit();
-        }
     }
 
     public boolean isTablet() {
