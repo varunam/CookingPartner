@@ -3,14 +3,26 @@ package app.cooking_partner.com.cookingpartner.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Recipe implements Parcelable {
 
+    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
+        @Override
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        @Override
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
     private int id;
     private String name;
-    private List<Ingredient> ingredients;
-    private List<Step> steps;
+    private List<Ingredient> ingredients = new ArrayList<>();
+    private List<Step> steps = new ArrayList<>();
     private int servings;
     private String imageUrl;
 
@@ -26,23 +38,11 @@ public class Recipe implements Parcelable {
     protected Recipe(Parcel in) {
         id = in.readInt();
         name = in.readString();
-        ingredients = in.readArrayList(null);
-        steps = in.readArrayList(null);
+        in.readList(ingredients, getClass().getClassLoader());
+        in.readList(steps, getClass().getClassLoader());
         servings = in.readInt();
         imageUrl = in.readString();
     }
-
-    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
-        @Override
-        public Recipe createFromParcel(Parcel in) {
-            return new Recipe(in);
-        }
-
-        @Override
-        public Recipe[] newArray(int size) {
-            return new Recipe[size];
-        }
-    };
 
     public int getId() {
         return id;

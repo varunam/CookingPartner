@@ -1,6 +1,7 @@
 package app.cooking_partner.com.cookingpartner.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -35,8 +36,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
     public RecyclerViewAdapter(Context context, List<Recipe> recipes, String sendNull) {
-        if (context instanceof OnRecipeClickedListener)
-        {
+        if (context instanceof OnRecipeClickedListener) {
             this.onRecipeClickedListener = (OnRecipeClickedListener) context;
         }
         this.recipes = recipes;
@@ -81,6 +81,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 public void onClick(View view) {
                     Log.e(TAG, "Sending position " + position);
                     onRecipeClickedListener.onRecipeSelected(recipe);
+
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("RECIPE_PREF", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("RECIPE_CLICKED", position);
+                    editor.apply();
                 }
             });
         } else if (CATEGORY.equals(STEPS_LIST)) {

@@ -5,4 +5,6 @@
     <string name="x_ingredients">%1d Ingredients</string>
     <string name="step_x">Step %1d</string>
     <string name="recipe_introduction">Recipe Introduction</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

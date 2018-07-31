@@ -7,6 +7,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class Step implements Parcelable {
 
+    public static final Creator<Step> CREATOR = new Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
     private int id;
     private String shortDescription, description;
     @SerializedName("videoURL")
@@ -29,18 +40,6 @@ public class Step implements Parcelable {
         videoUrl = in.readString();
         thumbNailUrl = in.readString();
     }
-
-    public static final Creator<Step> CREATOR = new Creator<Step>() {
-        @Override
-        public Step createFromParcel(Parcel in) {
-            return new Step(in);
-        }
-
-        @Override
-        public Step[] newArray(int size) {
-            return new Step[size];
-        }
-    };
 
     public int getId() {
         return id;

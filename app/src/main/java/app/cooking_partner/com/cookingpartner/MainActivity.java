@@ -9,24 +9,22 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import app.cooking_partner.com.cookingpartner.fragments.IndividualStepFragment;
-import app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment;
+import app.cooking_partner.com.cookingpartner.fragments.MasterRecipeApiFragment;
 import app.cooking_partner.com.cookingpartner.fragments.RecipeHomeFragment;
 import app.cooking_partner.com.cookingpartner.interfaces.OnRecipeClickedListener;
 import app.cooking_partner.com.cookingpartner.interfaces.OnStepClickedListener;
 import app.cooking_partner.com.cookingpartner.model.Recipe;
 import app.cooking_partner.com.cookingpartner.model.Step;
 
-import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment.PARCELABLE_KEY;
+import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeApiFragment.PARCELABLE_KEY;
 
 public class MainActivity extends AppCompatActivity implements OnRecipeClickedListener, OnStepClickedListener {
-
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String FRAGMENT_STATE = "fragment-state-key";
 
     public static final String MASTER_RECIPE_FRAGMENT = "master-recipe-fragment";
     public static final String RECIPE_HOME_FRAGMENT = "recipe-home-fragment";
     public static final String INDIVIDUAL_STEP_FRAGMENT = "individual-step-fragment";
-
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String FRAGMENT_STATE = "fragment-state-key";
     private boolean twoPaneLayout = false;
 
     @Override
@@ -34,7 +32,15 @@ public class MainActivity extends AppCompatActivity implements OnRecipeClickedLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState != null) {
+        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey("recipe")) {
+            Bundle bundle = getIntent().getBundleExtra("recipe");
+            RecipeHomeFragment recipeHomeFragment = new RecipeHomeFragment();
+            recipeHomeFragment.setArguments(bundle);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.container, recipeHomeFragment, RECIPE_HOME_FRAGMENT)
+                    .commit();
+        } else if (savedInstanceState != null) {
             Log.e(TAG, "SavedInstanceState received non null");
         } else {
             loadFragment(MASTER_RECIPE_FRAGMENT);
@@ -52,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnRecipeClickedLi
                 fragment = new RecipeHomeFragment();
                 break;
             default:
-                fragment = new MasterRecipeFragment();
+                fragment = new MasterRecipeApiFragment();
                 break;
         }
 

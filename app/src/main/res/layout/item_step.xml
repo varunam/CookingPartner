@@ -13,8 +13,8 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:focusable="true"
         android:clickable="true"
+        android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="2dp"
         app:cardElevation="5dp"
@@ -29,15 +29,15 @@
 
             <TextView
                 android:id="@+id/is_step_id"
-                android:text="@string/step_x"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:fontFamily="serif"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:fontFamily="serif"
+                android:text="@string/step_x"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 

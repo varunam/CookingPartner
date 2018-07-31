@@ -17,13 +17,11 @@ import java.util.List;
 import app.cooking_partner.com.cookingpartner.MainActivity;
 import app.cooking_partner.com.cookingpartner.R;
 import app.cooking_partner.com.cookingpartner.adapters.RecyclerViewAdapter;
-import app.cooking_partner.com.cookingpartner.interfaces.OnStepClickedListener;
 import app.cooking_partner.com.cookingpartner.model.Ingredient;
 import app.cooking_partner.com.cookingpartner.model.Recipe;
 import app.cooking_partner.com.cookingpartner.model.Step;
 
-import static app.cooking_partner.com.cookingpartner.MainActivity.INDIVIDUAL_STEP_FRAGMENT;
-import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment.PARCELABLE_KEY;
+import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeApiFragment.PARCELABLE_KEY;
 
 public class RecipeHomeFragment extends Fragment {
     private static final String TAG = RecipeHomeFragment.class.getSimpleName();

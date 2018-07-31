@@ -27,7 +27,7 @@ import com.google.android.exoplayer2.util.Util;
 import app.cooking_partner.com.cookingpartner.R;
 import app.cooking_partner.com.cookingpartner.model.Step;
 
-import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeFragment.PARCELABLE_KEY;
+import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeApiFragment.PARCELABLE_KEY;
 
 public class IndividualStepFragment extends Fragment {
 
