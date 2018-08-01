@@ -16,40 +16,40 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static android.support.constraint.Constraints.TAG;
 
 public class RecipesApiCall {
-    RecipeApiResponseListener mRecipeApiResponseListener;
-
-    public RecipesApiCall(RecipeApiResponseListener recipeApiResponseListener) {
-        mRecipeApiResponseListener = recipeApiResponseListener;
-    }
-
-    public void execute() {
-
-        //creating retrofit object
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Api.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        //creating api interface
-        Api api = retrofit.create(Api.class);
-
-
-        Call<List<Recipe>> recipesCall = api.getRecipes();
-        recipesCall.enqueue(new Callback<List<Recipe>>() {
-            @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                List<Recipe> recipes = response.body();
-                for (Recipe recipe : recipes) {
-                    Log.e(TAG, "Recipe name: " + recipe.getName());
-                }
-                mRecipeApiResponseListener.onResponseReceived(recipes);
-            }
-
-            @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                mRecipeApiResponseListener.onResponseFailed(t);
-                Log.e(TAG, "Failed to retrieve recipes with error: " + t.getMessage());
-            }
-        });
-    }
+	RecipeApiResponseListener mRecipeApiResponseListener;
+	
+	public RecipesApiCall(RecipeApiResponseListener recipeApiResponseListener) {
+		mRecipeApiResponseListener = recipeApiResponseListener;
+	}
+	
+	public void execute() {
+		
+		//creating retrofit object
+		Retrofit retrofit = new Retrofit.Builder()
+				.baseUrl(Api.BASE_URL)
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+		
+		//creating api interface
+		Api api = retrofit.create(Api.class);
+		
+		
+		Call<List<Recipe>> recipesCall = api.getRecipes();
+		recipesCall.enqueue(new Callback<List<Recipe>>() {
+			@Override
+			public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+				List<Recipe> recipes = response.body();
+				for (Recipe recipe : recipes) {
+					Log.e(TAG, "Recipe name: " + recipe.getName());
+				}
+				mRecipeApiResponseListener.onResponseReceived(recipes);
+			}
+			
+			@Override
+			public void onFailure(Call<List<Recipe>> call, Throwable t) {
+				mRecipeApiResponseListener.onResponseFailed(t);
+				Log.e(TAG, "Failed to retrieve recipes with error: " + t.getMessage());
+			}
+		});
+	}
 }
