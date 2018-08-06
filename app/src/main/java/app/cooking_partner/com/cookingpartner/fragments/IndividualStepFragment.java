@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -30,21 +31,28 @@ import app.cooking_partner.com.cookingpartner.model.Step;
 import static app.cooking_partner.com.cookingpartner.fragments.MasterRecipeApiFragment.PARCELABLE_KEY;
 
 public class IndividualStepFragment extends Fragment {
-
+	
 	private static final String TAG = IndividualStepFragment.class.getSimpleName();
-
+	private static final String POSITION_KEY = "exoplayer-position";
+	
 	private SimpleExoPlayerView exoPlayerView;
 	private TextView stepDescription;
 	private SimpleExoPlayer exoPlayer;
-
+	
+	private long position = 0;
+	
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_individual_step, container, false);
-
+		
 		exoPlayerView = rootView.findViewById(R.id.fis_exoplayer_id);
 		stepDescription = rootView.findViewById(R.id.fis_step_description_id);
-
+		
+		if (savedInstanceState != null)
+			if (savedInstanceState.containsKey(POSITION_KEY))
+				position = savedInstanceState.getLong(POSITION_KEY, C.TIME_UNSET);
+		
 		if (getArguments() != null && getArguments().containsKey(PARCELABLE_KEY)) {
 			Step step = getArguments().getParcelable(PARCELABLE_KEY);
 			if (step != null) {
@@ -54,19 +62,19 @@ public class IndividualStepFragment extends Fragment {
 					initializePlayer(Uri.parse(videoUrl));
 				} else
 					Log.e(TAG, "Received null VideoUrl");
-
+				
 				if (stepDescription != null)
 					stepDescription.setText(step.getDescription());
 			} else
 				Log.e(TAG, "Received null step");
 		} else
 			Log.e(TAG, "Received NULL Step");
-
+		
 		return rootView;
 	}
-
+	
 	private void initializePlayer(Uri mediaUri) {
-
+		
 		if (exoPlayer == null) {
 			TrackSelector trackSelector = new DefaultTrackSelector();
 			LoadControl loadControl = new DefaultLoadControl();
@@ -74,12 +82,14 @@ public class IndividualStepFragment extends Fragment {
 			String userAgent = Util.getUserAgent(this.getActivity(), "CookingPartner");
 			MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
 					this.getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
+			if (position != C.POSITION_UNSET)
+				exoPlayer.seekTo(position);
 			exoPlayer.prepare(mediaSource);
 			exoPlayer.setPlayWhenReady(true);
 			exoPlayerView.setPlayer(exoPlayer);
 		}
 	}
-
+	
 	private void releasePlayer() {
 		if (exoPlayer != null) {
 			exoPlayer.stop();
@@ -87,10 +97,17 @@ public class IndividualStepFragment extends Fragment {
 		}
 		exoPlayer = null;
 	}
-
+	
 	@Override
 	public void onStop() {
 		releasePlayer();
 		super.onStop();
+	}
+	
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		position = exoPlayer.getCurrentPosition();
+		outState.putLong(POSITION_KEY, position);
 	}
 }

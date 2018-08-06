@@ -22,38 +22,38 @@ public class RecipesApiCallForWidget {
 	Context mContext;
 	AppWidgetManager mAppWidgetManager;
 	int[] mAppWidgetIds;
-
+	
 	public RecipesApiCallForWidget(RecipeApiResponseListener recipeApiResponseListener, Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		mRecipeApiResponseListener = recipeApiResponseListener;
 		mContext = context;
 		mAppWidgetManager = appWidgetManager;
 		mAppWidgetIds = appWidgetIds;
 	}
-
+	
 	public Context getmContext() {
 		return mContext;
 	}
-
+	
 	public AppWidgetManager getmAppWidgetManager() {
 		return mAppWidgetManager;
 	}
-
+	
 	public int[] getmAppWidgetIds() {
 		return mAppWidgetIds;
 	}
-
+	
 	public void execute() {
-
+		
 		//creating retrofit object
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl(Api.BASE_URL)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
-
+		
 		//creating api interface
 		Api api = retrofit.create(Api.class);
-
-
+		
+		
 		Call<List<Recipe>> recipesCall = api.getRecipes();
 		recipesCall.enqueue(new Callback<List<Recipe>>() {
 			@Override
@@ -64,7 +64,7 @@ public class RecipesApiCallForWidget {
 				}
 				mRecipeApiResponseListener.onResponseReceived(recipes);
 			}
-
+			
 			@Override
 			public void onFailure(Call<List<Recipe>> call, Throwable t) {
 				mRecipeApiResponseListener.onResponseFailed(t);

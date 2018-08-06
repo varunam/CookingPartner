@@ -16,17 +16,20 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
-public class RecipeActivityBasicTest {
+public class StepDescriptionCheckTest {
 	
 	@Rule
 	public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class);
 	
 	@Test
-	public void ClickRecipe1_checkIngredients() {
+	public void onClickedStepCheck() {
 		onView(withId(R.id.lr_recycler_view_id))
 				.perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 		
-		onView(withId(R.id.flrm_ingredients_title_id)).check(matches(withText("9 Ingredients")));
+		onView(withId(R.id.flrm_recycler_view_id))
+				.perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
+		
+		onView(withId(R.id.fis_step_description_id)).check(matches(withText("1. Preheat the oven to 350°F. Butter a 9\" deep dish pie pan.")));
 	}
 	
 	
